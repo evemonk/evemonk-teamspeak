@@ -3,4 +3,10 @@ version: "3.7"
 services:
   teamspeak:
     image: "docker.io/library/teamspeak:3.12.1"
+    environment:
+      - TS3SERVER_LICENSE=accept
+    ports:
+      - "9987:9987/udp"
+      - "10011:10011"
+      - "30033:30033"
 
