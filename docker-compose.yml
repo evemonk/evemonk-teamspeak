@@ -1,0 +1,6 @@
+version: "3.7"
+
+services:
+  teamspeak:
+    image: "docker.io/library/teamspeak:3.12.1"
+
