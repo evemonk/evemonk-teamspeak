@@ -1,17 +1,45 @@
 version: "3.7"
 
 volumes:
+  mariadb_data: {}
   teamspeak_data: {}
 
 services:
+  teamspeak_db:
+    image: "docker.io/library/mariadb:10.5.8"
+    container_name: "teamspeak_db"
+    restart: "unless-stopped"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=password"
+      - "MYSQL_USER=user"
+      - "MYSQL_PASSWORD=password"
+      - "MYSQL_DATABASE=teamspeak_production"
+    volumes:
+      - "mariadb_data:/var/lib/mysql"
+
   teamspeak:
-    image: "docker.io/library/teamspeak:3.12.1"
+    image: "docker.io/library/teamspeak:3.13.2"
+    container_name: "teamspeak_teamspeak"
+    restart: "unless-stopped"
     environment:
       - "TS3SERVER_LICENSE=accept"
+      - "TS3SERVER_DB_PLUGIN=ts3db_mariadb"
+      - "TS3SERVER_DB_SQLCREATEPATH=create_mariadb"
+      - "TS3SERVER_DEFAULT_VOICE_PORT=9987"
+      - "TS3SERVER_QUERY_PORT=10011"
+      - "TS3SERVER_QUERY_SSH_PORT=10022"
+      - "TS3SERVER_FILETRANSFER_PORT=30033"
+      - "TS3SERVER_SERVERADMIN_PASSWORD=password"
+      - "TS3SERVER_DB_HOST=teamspeak_db"
+      - "TS3SERVER_DB_PORT=3306"
+      - "TS3SERVER_DB_USER=user"
+      - "TS3SERVER_DB_PASSWORD=password"
+      - "TS3SERVER_DB_NAME=teamspeak_production"
+      - "TS3SERVER_DB_WAITUNTILREADY=30"
     ports:
       - "9987:9987/udp"
       - "10011:10011"
+      - "10022:10022"
       - "30033:30033"
     volumes:
-      - "teamspeak_data:/data"
-
+      - "teamspeak_data:/var/ts3server"
